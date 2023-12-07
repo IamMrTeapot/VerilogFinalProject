@@ -8,10 +8,10 @@
 `define PLAYER2WIN 2'b10
 
 module pixel_gen(
-   input [9:0] h_cnt,
+   input [9:0] x,
    input clk,
    input valid,
-   input [9:0]v_cnt,
+   input [9:0] y,
    input [9:0]ballX,
    input [9:0]ballY,
    input [9:0]posX1,
@@ -28,40 +28,40 @@ module pixel_gen(
 reg ball_inX;
 reg ball_inY;
 
-wire border =  (v_cnt[8:3]==0) || (v_cnt[8:3]==59);
-wire paddle1 = ((h_cnt>=posX1+8) && (h_cnt<=posX1+18) &&(v_cnt>=posY1+8)&& (v_cnt<=posY1+48));
-wire paddle2 = ((h_cnt>=posX2+8) && (h_cnt<=posX2+18) &&(v_cnt>=posY2+8) && (v_cnt<=posY2+48)) ;
+wire border =  ( y[8:3]==0) || ( y[8:3]==59);
+wire paddle1 = ((x>=posX1+8) && (x<=posX1+18) &&( y>=posY1+8)&& ( y<=posY1+48));
+wire paddle2 = ((x>=posX2+8) && (x<=posX2+18) &&( y>=posY2+8) && ( y<=posY2+48)) ;
 
-wire zero = ((h_cnt<=250)&&(h_cnt>=234)&& (v_cnt>=200) &&(v_cnt<=204)) ||
-            ((h_cnt<=250)&&(h_cnt>=234)&& (v_cnt>=168)&& (v_cnt<=172)) ||
-            ((h_cnt>=254)&&(h_cnt<=258)&&(v_cnt<=192)&& (v_cnt>=176)) ||
-            ((h_cnt<=230)&&(h_cnt>=226)&&(v_cnt<=192)&& (v_cnt>=176)) ;
-wire zero2 = ((h_cnt>=366)&&(h_cnt<=382)&& (v_cnt>=200) &&(v_cnt<=204)) || ((h_cnt>=366)&&(h_cnt<=382)&& (v_cnt>=168)&& (v_cnt<=172)) ||((h_cnt>=386)&&(h_cnt<=390)&&(v_cnt<=192)&& (v_cnt>=176)) ||((h_cnt<=362)&&(h_cnt>=358)&&(v_cnt<=192)&& (v_cnt>=176)) ;
+wire zero = ((x<=250)&&(x>=234)&& ( y>=200) &&( y<=204)) ||
+            ((x<=250)&&(x>=234)&& ( y>=168)&& ( y<=172)) ||
+            ((x>=254)&&(x<=258)&&( y<=192)&& ( y>=176)) ||
+            ((x<=230)&&(x>=226)&&( y<=192)&& ( y>=176)) ;
+wire zero2 = ((x>=366)&&(x<=382)&& ( y>=200) &&( y<=204)) || ((x>=366)&&(x<=382)&& ( y>=168)&& ( y<=172)) ||((x>=386)&&(x<=390)&&( y<=192)&& ( y>=176)) ||((x<=362)&&(x>=358)&&( y<=192)&& ( y>=176)) ;
 
-wire one = ((v_cnt<=172)&&(v_cnt>=168)&&(h_cnt<=250)&&(h_cnt>=244)) ||((v_cnt<=200)&&(v_cnt>=168)&&(h_cnt >=250)&&(h_cnt <=254));
-wire one2 = ((v_cnt>=168)&&(v_cnt<=172)&&(h_cnt>=366)&&(h_cnt<=372)) ||((v_cnt<=200)&&(v_cnt>=168)&&(h_cnt >=372)&&(h_cnt <=376));
+wire one = (( y<=172)&&( y>=168)&&(x<=250)&&(x>=244)) ||(( y<=200)&&( y>=168)&&(x >=250)&&(x <=254));
+wire one2 = (( y>=168)&&( y<=172)&&(x>=366)&&(x<=372)) ||(( y<=200)&&( y>=168)&&(x >=372)&&(x <=376));
 
-wire two = ((h_cnt>=250)&&(h_cnt<=266)&&(v_cnt >=168)&&(v_cnt <=172)) ||((h_cnt >= 270) &&(h_cnt <= 274) && (v_cnt >=176)&& (v_cnt <=180)) || ((h_cnt<=266)&&(h_cnt>=258)&&(v_cnt>=184)&&(v_cnt<=188)) ||((h_cnt <= 254)&&(h_cnt >= 250)&&(v_cnt >= 192)&&(v_cnt <= 196)) || ((h_cnt>=250)&&(h_cnt<=274)&&(v_cnt >=200)&&(v_cnt <=204));
-wire two2 = ((h_cnt>=366)&&(h_cnt<=382)&&(v_cnt >=168)&&(v_cnt <=172)) ||((h_cnt >= 386) &&(h_cnt <= 390) && (v_cnt <= 180) &&(v_cnt >=176)) || ((h_cnt<=382)&&(h_cnt>=374)&&(v_cnt>=184)&&(v_cnt<=188)) ||((h_cnt <= 370)&&(h_cnt >= 366)&&(v_cnt >= 192)&&(v_cnt <= 196)) || ((h_cnt>=366)&&(h_cnt<=390)&&(v_cnt >=200)&&(v_cnt <=204));
+wire two = ((x>=250)&&(x<=266)&&( y >=168)&&( y <=172)) ||((x >= 270) &&(x <= 274) && ( y >=176)&& ( y <=180)) || ((x<=266)&&(x>=258)&&( y>=184)&&( y<=188)) ||((x <= 254)&&(x >= 250)&&( y >= 192)&&( y <= 196)) || ((x>=250)&&(x<=274)&&( y >=200)&&( y <=204));
+wire two2 = ((x>=366)&&(x<=382)&&( y >=168)&&( y <=172)) ||((x >= 386) &&(x <= 390) && ( y <= 180) &&( y >=176)) || ((x<=382)&&(x>=374)&&( y>=184)&&( y<=188)) ||((x <= 370)&&(x >= 366)&&( y >= 192)&&( y <= 196)) || ((x>=366)&&(x<=390)&&( y >=200)&&( y <=204));
 
-wire three =((h_cnt>=250)&&(h_cnt<=266)&&(v_cnt>=168)&&(v_cnt<=172)) || ((h_cnt >= 270) &&(h_cnt <= 274) && (v_cnt >= 176)&& (v_cnt <= 180)) || ((h_cnt<=266) && (h_cnt>=258) &&(v_cnt >=184)&&(v_cnt <=188)) || ((h_cnt >=270) &&(h_cnt <=274) && (v_cnt >= 192)&& (v_cnt <= 196))||((h_cnt<=266) && (h_cnt>=250) && (v_cnt >= 200)&& (v_cnt <= 204));
-wire three2 =((h_cnt>=366)&&(h_cnt<=382)&&(v_cnt>=168)&&(v_cnt<=172)) || ((h_cnt >= 386) &&(h_cnt <= 390) && (v_cnt >= 176)&& (v_cnt <= 180)) || ((h_cnt<=382) && (h_cnt>=374) &&(v_cnt >=184)&&(v_cnt <=188)) || ((h_cnt >= 386) &&(h_cnt <= 390) && (v_cnt >= 192)&& (v_cnt <= 196))||((h_cnt<=382) && (h_cnt>=366) && (v_cnt >= 200)&& (v_cnt <= 204));
+wire three =((x>=250)&&(x<=266)&&( y>=168)&&( y<=172)) || ((x >= 270) &&(x <= 274) && ( y >= 176)&& ( y <= 180)) || ((x<=266) && (x>=258) &&( y >=184)&&( y <=188)) || ((x >=270) &&(x <=274) && ( y >= 192)&& ( y <= 196))||((x<=266) && (x>=250) && ( y >= 200)&& ( y <= 204));
+wire three2 =((x>=366)&&(x<=382)&&( y>=168)&&( y<=172)) || ((x >= 386) &&(x <= 390) && ( y >= 176)&& ( y <= 180)) || ((x<=382) && (x>=374) &&( y >=184)&&( y <=188)) || ((x >= 386) &&(x <= 390) && ( y >= 192)&& ( y <= 196))||((x<=382) && (x>=366) && ( y >= 200)&& ( y <= 204));
 
-wire four = ((h_cnt>=254) && (h_cnt<=258) && (v_cnt<=192) && (v_cnt>=176)) || // Vertical line on right
-            ((h_cnt >= 226) && (h_cnt <= 258) && (v_cnt >= 184) && (v_cnt <= 188)) || // Horizontal line in middle
-            ((h_cnt<=230) && (h_cnt>=226) && (v_cnt<=192) && (v_cnt>=184));   // Vertical line on left down
-wire four2 = ((h_cnt>=370) && (h_cnt<=374) && (v_cnt<=192) && (v_cnt>=176)) || // Vertical line on right
-            ((h_cnt >= 342) && (h_cnt <= 374) && (v_cnt >= 184) && (v_cnt <= 188)) || // Horizontal line in middle
-            ((h_cnt<=346) && (h_cnt>=342) && (v_cnt<=192) && (v_cnt>=184));   // Vertical line on left down
+wire four = ((x>=254) && (x<=258) && ( y<=192) && ( y>=176)) || // Vertical line on right
+            ((x >= 226) && (x <= 258) && ( y >= 184) && ( y <= 188)) || // Horizontal line in middle
+            ((x<=230) && (x>=226) && ( y<=192) && ( y>=184));   // Vertical line on left down
+wire four2 = ((x>=370) && (x<=374) && ( y<=192) && ( y>=176)) || // Vertical line on right
+            ((x >= 342) && (x <= 374) && ( y >= 184) && ( y <= 188)) || // Horizontal line in middle
+            ((x<=346) && (x>=342) && ( y<=192) && ( y>=184));   // Vertical line on left down
 
 
 assign  BouncingObject = border | paddle1 | paddle2 ; // active if the border or paddle is redrawing itself
 always @(posedge clk)
-if(ball_inX==0) ball_inX <= (h_cnt==ballX) & ball_inY; else ball_inX <= !(h_cnt == ballX+8);
+if(ball_inX==0) ball_inX <= (x==ballX) & ball_inY; else ball_inX <= !(x == ballX+8);
 
 
 always @(posedge clk)
-if(ball_inY==0) ball_inY <= (v_cnt==ballY); else ball_inY <= !(v_cnt==ballY+8);
+if(ball_inY==0) ball_inY <= ( y==ballY); else ball_inY <= !( y==ballY+8);
 
 wire ball = ball_inX & ball_inY;
 
@@ -76,7 +76,7 @@ else if(score1 == 3'd0)begin
      if(zero &&valid)
         {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
       else 
-                {vgaRed, vgaGreen, vgaBlue} = 12'h000;
+                {vgaRed, vgaGreen, vgaBlue} = 12'hfa1;
        if(score2 == 3'd0)begin
             if(zero2 &&valid)
                 {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
@@ -203,7 +203,7 @@ else if(score1 == 3'b100)begin
       end
 end
 else 
-    {vgaRed, vgaGreen, vgaBlue} = 12'h0;
+    {vgaRed, vgaGreen, vgaBlue} = 12'hfa1;
 end
 
 endmodule

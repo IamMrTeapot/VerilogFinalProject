@@ -39,9 +39,9 @@ module pong_text(
     assign row_addr_score_left = y[6:3];
     assign bit_addr_score_left = x[5:3];
     always @*
-        case(x[8:6])
-            4'h6 : char_addr_score_left = {3'b011, dig_left_1};    // tens digit
-            4'h7 : char_addr_score_left = {3'b011, dig_left_0};    // ones digit
+        case(x[9:4])
+            6'h01 : char_addr_score_left = {3'b011, dig_left_1};    // tens digit
+            6'h02 : char_addr_score_left = {3'b011, dig_left_0};    // ones digit
         endcase
 
     //score_right
@@ -49,13 +49,13 @@ module pong_text(
     assign row_addr_score_right = y[6:3];
     assign bit_addr_score_right = x[5:3];
     always @*
-        case(x[8:6])
-            4'h6 : char_addr_score_right = {3'b011, dig_right_1};    // tens digit
-            4'h7 : char_addr_score_right = {3'b011, dig_right_0};    // ones digit
+        case(x[9:4])
+            6'h25 : char_addr_score_right = {3'b011, dig_right_1};    // tens digit
+            6'h26 : char_addr_score_right = {3'b011, dig_right_0};    // ones digit
         endcase
    
    //logo
-    assign logo_on = (y >= 35) && (y<=95) && (3 <= x[9:6]) && (x <= 200) && (x >= 440);
+    assign logo_on = (y >= 35) && (y<=95) && (x <= 200) && (x >= 440);
     assign row_addr_l = y[6:3];
     assign bit_addr_l = x[5:3];
     always @*
@@ -68,11 +68,13 @@ module pong_text(
     
     // mux for ascii ROM addresses and rgb
     always @* begin
-        text_rgb = 12'hFC1;     
+        text_rgb = 12'hFC1;
+
         if(game_bg_on) begin
             text_rgb = 12'h12F;
         end
-        if(score_ball_left_on) begin
+
+        else if(score_ball_left_on) begin
             char_addr = char_addr_score_left;
             row_addr = row_addr_score_left;
             bit_addr = bit_addr_score_left;
@@ -81,7 +83,7 @@ module pong_text(
         end
 
         else if(score_ball_right_on) begin
-            char_addr = char_addr_score_right
+            char_addr = char_addr_score_right;
             row_addr = row_addr_score_right;
             bit_addr = bit_addr_score_right;
             if(ascii_bit)

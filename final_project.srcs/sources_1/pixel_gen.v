@@ -18,8 +18,10 @@ module pixel_gen(
    input [9:0]posX2,
    input [8:0]posY1,
    input [8:0]posY2,
-   input [2:0]score1,
-   input [2:0]score2,
+   input [3:0]num3,
+   input [3:0]num2,
+   input [3:0]num1,
+   input [3:0]num0, 
    output reg [3:0] vgaRed,
    output reg [3:0] vgaGreen,
    output reg [3:0] vgaBlue,
@@ -30,7 +32,22 @@ reg ball_inY;
 
 wire border =  ( y[8:3]==15) || ( y[8:3]==55);
 wire paddle1 = ((x>=posX1+8) && (x<=posX1+18) &&( y>=posY1+8)&& ( y<=posY1+48));
-wire paddle2 = ((x>=posX2+8) && (x<=posX2+18) &&( y>=posY2+8) && ( y<=posY2+48)) ;
+wire paddle2 = ((x>=posX2+8) && (x<=posX2+18) &&( y>=posY2+8) && ( y<=posY2+48));
+
+wire [11:0] text_rgb;
+wire [3:0] text_on;
+
+pong_text text_show(
+    .clk(clk),
+    .dig_left_1(num3),
+    .dig_left_0(num2),
+    .dig_right_1(num1),
+    .dig_right_0(num0),
+    .x(h_cnt),
+    .y(v_cnt),
+    .text_on(text_on),
+    .text_rgb(text_rgb)
+);
 
 assign  BouncingObject = border | paddle1 | paddle2 ; // active if the border or paddle is redrawing itself
 always @(posedge clk)
@@ -47,8 +64,10 @@ if(valid && BouncingObject)
     {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
 else if(valid && ball)
     {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-else 
-    {vgaRed, vgaGreen, vgaBlue} = 12'hfa1;
+else if(valid && text_on!=4'b0000)
+    {vgaRed, vgaGreen, vgaBlue} = text_rgb;
+else
+    {vgaRed, vgaGreen, vgaBlue} = 12'h000;
 end
 
 endmodule

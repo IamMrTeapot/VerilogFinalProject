@@ -61,13 +61,19 @@ module top(
     wire valid;
     wire [9:0]h_cnt;
     wire [9:0]v_cnt;
+
+    // Display score on Seven segment
+    wire [3:0] num3; // From left to right
+    wire [3:0] num2;
+    wire [3:0] num1;
+    wire [3:0] num0;
     
     vga_controller vga1( clk1, rst, hsync, vsync, valid, h_cnt, v_cnt );
       
     pixel_gen pix1(
            h_cnt, clk1, valid, v_cnt,
            ballX, ballY, posX1, posX2, posY1, posY2,
-           score1, score2,
+           num3, num2, num1, num0,
            vgaRed, vgaGreen, vgaBlue,
            BouncingObject
        );
@@ -97,12 +103,6 @@ module top(
     
     Ball ball(clk, rst, state, serve, CollisionX1, CollisionX2, CollisionY1, CollisionY2, ballX, ballY, ballStatus);
     GameLogic GameLogic(clk, rst, ballStatus, sp_enter, state, score1, score2,serve);
-
-    // Display score on Seven segment
-    wire [3:0] num3; // From left to right
-    wire [3:0] num2;
-    wire [3:0] num1;
-    wire [3:0] num0;
     
     // BCD
     ROM_BinaryToBCD bcdP1(num3,num2,score1,clk13);

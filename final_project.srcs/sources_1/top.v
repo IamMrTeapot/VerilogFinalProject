@@ -39,11 +39,11 @@ module top(
     
     // player 1 position 
     wire [9:0]posX1;
-    wire [8:0]posY1;
+    wire [9:0]posY1;
     
     // player 2 position 
     wire [9:0]posX2;
-    wire [8:0]posY2;
+    wire [9:0]posY2;
     
     wire BouncingObject;
     

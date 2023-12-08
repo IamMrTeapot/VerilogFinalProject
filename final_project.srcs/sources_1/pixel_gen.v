@@ -7,6 +7,13 @@
 `define PLAYER1WIN 2'b01
 `define PLAYER2WIN 2'b10
 
+`define BLACK 12'h000
+`define WHITE 12'hfff
+`define RED 12'hf23
+`define YELLOW 12'hfc0
+`define BLUE 12'h12f
+`define PINK 12'hf58
+
 module pixel_gen(
    input [9:0] x,
    input clk,
@@ -30,7 +37,10 @@ module pixel_gen(
 reg ball_inX;
 reg ball_inY;
 
-wire border =  ( y[8:3]==15) || ( y[8:3]==55);
+parameter border_width = 5;
+
+wire game_area = (x >= 55 && x <= 640-55) && (y >= 117 && y <= 480-29);
+wire border =  game_area && (y >= 117 && y <= 117 + border_width ) || ( y <= 451 && y >= 451 - border_width);
 wire paddle1 = ((x>=posX1+8) && (x<=posX1+18) &&( y>=posY1+8)&& ( y<=posY1+48));
 wire paddle2 = ((x>=posX2+8) && (x<=posX2+18) &&( y>=posY2+8) && ( y<=posY2+48));
 
@@ -60,14 +70,21 @@ if(ball_inY==0) ball_inY <= ( y==ballY); else ball_inY <= !( y==ballY+8);
 wire ball = ball_inX & ball_inY;
 
 always @(*) begin
-if(valid && BouncingObject)
-    {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-else if(valid && ball)
-    {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-else if(valid && text_on!=4'b0000)
-    {vgaRed, vgaGreen, vgaBlue} = text_rgb;
-else
-    {vgaRed, vgaGreen, vgaBlue} = 12'h000;
+if (valid)
+    if(text_on!=4'b0000)
+        {vgaRed, vgaGreen, vgaBlue} = `WHITE;
+    else if(border)
+        {vgaRed, vgaGreen, vgaBlue} = `RED;
+    else if(paddle1|| paddle2)
+        {vgaRed, vgaGreen, vgaBlue} = `WHITE;
+    else if(ball)
+        {vgaRed, vgaGreen, vgaBlue} = `PINK;
+    else if(game_area)
+        {vgaRed, vgaGreen, vgaBlue} = `BLUE;
+    else
+        {vgaRed, vgaGreen, vgaBlue} = `YELLOW;
+else 
+    {vgaRed, vgaGreen, vgaBlue} = `BLACK;
 end
 
 endmodule

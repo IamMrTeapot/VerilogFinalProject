@@ -1,14 +1,11 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Reference book: "FPGA Prototyping by Verilog Examples"
-//                      "Xilinx Spartan-3 Version"
-// Written by: Dr. Pong P. Chu
-// Published by: Wiley, 2008
-//
-// Adapted for Basys 3 by David J. Marion aka FPGA Dude
-//
-//////////////////////////////////////////////////////////////////////////////////
 
+`define BLACK 12'h000
+`define WHITE 12'hfff
+`define RED 12'hf23
+`define YELLOW 12'hfc0
+`define BLUE 12'h12f
+`define PINK 12'hf58
 
 module pong_text(
     input clk,
@@ -26,36 +23,34 @@ module pong_text(
     reg [2:0] bit_addr;
     wire [2:0] bit_addr_score_left, bit_addr_score_right, bit_addr_l;
     wire [7:0] ascii_word;
-    wire ascii_bit, game_bg_on, score_ball_left_on, score_ball_right_on, logo_on;
+    wire ascii_bit, score_ball_left_on, score_ball_right_on, logo_on;
 
     // instantiate ascii rom
     ascii_rom ascii_unit(.clk(clk), .addr(rom_addr), .data(ascii_word));
-   
-    //game_bg
-    assign game_bg_on = (x>=55) && (x<=585) && (y>=117) && (y<=451);
 
     //score_left
-    assign score_ball_left_on = (x>=15) && (x<=115) && (y>=40) && (y<=90);
+    assign score_ball_left_on = ((x>=3) && (x<=125) && (y>=10) && (y<=90));
     assign row_addr_score_left = y[6:3];
     assign bit_addr_score_left = x[5:3];
     always @*
-        case(x[9:4])
-            6'h01 : char_addr_score_left = {3'b011, dig_left_1};    // tens digit
-            6'h02 : char_addr_score_left = {3'b011, dig_left_0};    // ones digit
-        endcase
+        if (x>=3 && x<=59 && y>=10 && y<=90)
+            char_addr_score_left = {3'b011, dig_left_1};    // tens digit
+        else if (x>=62 && x<=125 && y>=10 && y<=90)
+            char_addr_score_left = {3'b011, dig_left_0};    // ones digit
 
     //score_right
-    assign score_ball_right_on = (x>=525) && (x<=625) && (y>=40) && (y<=90);
+    assign score_ball_right_on = ((x>=513) && (x<=635) && (y>=10) && (y<=90));
     assign row_addr_score_right = y[6:3];
     assign bit_addr_score_right = x[5:3];
     always @*
-        case(x[9:4])
-            6'h25 : char_addr_score_right = {3'b011, dig_right_1};    // tens digit
-            6'h26 : char_addr_score_right = {3'b011, dig_right_0};    // ones digit
-        endcase
+        if ((x>=513) && (x<=573) && (y>=10) && (y<=90))
+            char_addr_score_right = {3'b011, dig_right_1};    // tens digit
+        else if ((x>=575) && (x<=635) && (y>=10) && (y<=90))
+            char_addr_score_right = {3'b011, dig_right_0};    // ones digit
+        
    
-   //logo
-    assign logo_on = (y >= 35) && (y<=95) && (x <= 200) && (x >= 440);
+    //logo
+    assign logo_on = ((x >= 195) && (x <= 445) && (y >= 5) && (y<=95));
     assign row_addr_l = y[6:3];
     assign bit_addr_l = x[5:3];
     always @*
@@ -68,18 +63,22 @@ module pong_text(
     
     // mux for ascii ROM addresses and rgb
     always @* begin
-        text_rgb = 12'hFC1;
+        text_rgb = `YELLOW;
 
-        if(game_bg_on) begin
-            text_rgb = 12'h12F;
-        end
+        if(logo_on) begin
+            char_addr = char_addr_l;
+            row_addr = row_addr_l;
+            bit_addr = bit_addr_l-1;
+            if(ascii_bit)
+                text_rgb = `PINK; 
+        end  
 
         else if(score_ball_left_on) begin
             char_addr = char_addr_score_left;
             row_addr = row_addr_score_left;
-            bit_addr = bit_addr_score_left;
+            bit_addr = bit_addr_score_left-1;
             if(ascii_bit)
-                text_rgb = 12'hFA1; 
+                text_rgb = `PINK; 
         end
 
         else if(score_ball_right_on) begin
@@ -87,19 +86,15 @@ module pong_text(
             row_addr = row_addr_score_right;
             bit_addr = bit_addr_score_right;
             if(ascii_bit)
-                text_rgb = 12'hFA1; 
+                text_rgb = `PINK; 
         end
-        
-        else if(logo_on) begin
-            char_addr = char_addr_l;
-            row_addr = row_addr_l;
-            bit_addr = bit_addr_l;
-            if(ascii_bit)
-                text_rgb = 12'hFA1; 
-        end     
+
+        else
+            text_rgb = `YELLOW;
+            
     end
     
-    assign text_on = {game_bg_on, score_ball_left_on, score_ball_right_on, logo_on};
+    assign text_on = {score_ball_left_on, score_ball_right_on, logo_on};
     
     // ascii ROM interface
     assign rom_addr = {char_addr, row_addr};

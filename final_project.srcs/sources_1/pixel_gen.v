@@ -28,32 +28,9 @@ module pixel_gen(
 reg ball_inX;
 reg ball_inY;
 
-wire border =  ( y[8:3]==0) || ( y[8:3]==59);
+wire border =  ( y[8:3]==15) || ( y[8:3]==55);
 wire paddle1 = ((x>=posX1+8) && (x<=posX1+18) &&( y>=posY1+8)&& ( y<=posY1+48));
 wire paddle2 = ((x>=posX2+8) && (x<=posX2+18) &&( y>=posY2+8) && ( y<=posY2+48)) ;
-
-wire zero = ((x<=250)&&(x>=234)&& ( y>=200) &&( y<=204)) ||
-            ((x<=250)&&(x>=234)&& ( y>=168)&& ( y<=172)) ||
-            ((x>=254)&&(x<=258)&&( y<=192)&& ( y>=176)) ||
-            ((x<=230)&&(x>=226)&&( y<=192)&& ( y>=176)) ;
-wire zero2 = ((x>=366)&&(x<=382)&& ( y>=200) &&( y<=204)) || ((x>=366)&&(x<=382)&& ( y>=168)&& ( y<=172)) ||((x>=386)&&(x<=390)&&( y<=192)&& ( y>=176)) ||((x<=362)&&(x>=358)&&( y<=192)&& ( y>=176)) ;
-
-wire one = (( y<=172)&&( y>=168)&&(x<=250)&&(x>=244)) ||(( y<=200)&&( y>=168)&&(x >=250)&&(x <=254));
-wire one2 = (( y>=168)&&( y<=172)&&(x>=366)&&(x<=372)) ||(( y<=200)&&( y>=168)&&(x >=372)&&(x <=376));
-
-wire two = ((x>=250)&&(x<=266)&&( y >=168)&&( y <=172)) ||((x >= 270) &&(x <= 274) && ( y >=176)&& ( y <=180)) || ((x<=266)&&(x>=258)&&( y>=184)&&( y<=188)) ||((x <= 254)&&(x >= 250)&&( y >= 192)&&( y <= 196)) || ((x>=250)&&(x<=274)&&( y >=200)&&( y <=204));
-wire two2 = ((x>=366)&&(x<=382)&&( y >=168)&&( y <=172)) ||((x >= 386) &&(x <= 390) && ( y <= 180) &&( y >=176)) || ((x<=382)&&(x>=374)&&( y>=184)&&( y<=188)) ||((x <= 370)&&(x >= 366)&&( y >= 192)&&( y <= 196)) || ((x>=366)&&(x<=390)&&( y >=200)&&( y <=204));
-
-wire three =((x>=250)&&(x<=266)&&( y>=168)&&( y<=172)) || ((x >= 270) &&(x <= 274) && ( y >= 176)&& ( y <= 180)) || ((x<=266) && (x>=258) &&( y >=184)&&( y <=188)) || ((x >=270) &&(x <=274) && ( y >= 192)&& ( y <= 196))||((x<=266) && (x>=250) && ( y >= 200)&& ( y <= 204));
-wire three2 =((x>=366)&&(x<=382)&&( y>=168)&&( y<=172)) || ((x >= 386) &&(x <= 390) && ( y >= 176)&& ( y <= 180)) || ((x<=382) && (x>=374) &&( y >=184)&&( y <=188)) || ((x >= 386) &&(x <= 390) && ( y >= 192)&& ( y <= 196))||((x<=382) && (x>=366) && ( y >= 200)&& ( y <= 204));
-
-wire four = ((x>=254) && (x<=258) && ( y<=192) && ( y>=176)) || // Vertical line on right
-            ((x >= 226) && (x <= 258) && ( y >= 184) && ( y <= 188)) || // Horizontal line in middle
-            ((x<=230) && (x>=226) && ( y<=192) && ( y>=184));   // Vertical line on left down
-wire four2 = ((x>=370) && (x<=374) && ( y<=192) && ( y>=176)) || // Vertical line on right
-            ((x >= 342) && (x <= 374) && ( y >= 184) && ( y <= 188)) || // Horizontal line in middle
-            ((x<=346) && (x>=342) && ( y<=192) && ( y>=184));   // Vertical line on left down
-
 
 assign  BouncingObject = border | paddle1 | paddle2 ; // active if the border or paddle is redrawing itself
 always @(posedge clk)
@@ -65,143 +42,11 @@ if(ball_inY==0) ball_inY <= ( y==ballY); else ball_inY <= !( y==ballY+8);
 
 wire ball = ball_inX & ball_inY;
 
-
-
 always @(*) begin
 if(valid && BouncingObject)
     {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
 else if(valid && ball)
     {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-else if(score1 == 3'd0)begin
-     if(zero &&valid)
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      else 
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfa1;
-       if(score2 == 3'd0)begin
-            if(zero2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b01)begin
-            if(one2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b10)begin
-            if(two2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b11)begin
-            if(three2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else begin
-            if(four2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-end
-else if(score1 == 3'b01)begin
-     if(one &&valid)
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      else 
-                {vgaRed, vgaGreen, vgaBlue} = 12'h000;
-       if(score2 == 3'd0)begin
-            if(zero2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b01)begin
-            if(one2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b10)begin
-            if(two2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b11)begin
-            if(three2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else begin
-            if(four2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-end
-else if(score1 == 3'b10)begin
-     if(two &&valid)
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      else 
-                {vgaRed, vgaGreen, vgaBlue} = 12'h000;
-       if(score2 == 3'd0)begin
-            if(zero2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b01)begin
-            if(one2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b10)begin
-            if(two2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b11)begin
-            if(three2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else begin
-            if(four2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-end
-else if(score1 == 3'b11)begin
-     if(three &&valid)
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      else 
-            {vgaRed, vgaGreen, vgaBlue} = 12'h000;
-      if(score2 == 3'd0)begin
-            if(zero2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b01)begin
-            if(one2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b10)begin
-            if(two2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b11)begin
-            if(three2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else begin
-            if(four2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-end
-else if(score1 == 3'b100)begin
-     if(four &&valid)
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      else 
-            {vgaRed, vgaGreen, vgaBlue} = 12'h000;
-      if(score2 == 3'd0)begin
-            if(zero2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b01)begin
-            if(one2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b10)begin
-            if(two2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else if(score2 == 3'b11)begin
-            if(three2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-      else begin
-            if(four2 &&valid)
-                {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-      end
-end
 else 
     {vgaRed, vgaGreen, vgaBlue} = 12'hfa1;
 end

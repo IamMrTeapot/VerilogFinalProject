@@ -40,7 +40,7 @@ reg ball_inY;
 parameter border_width = 5;
 
 wire game_area = (x >= 55 && x <= 640-55) && (y >= 117 && y <= 480-29);
-wire border =  game_area && (y >= 117 && y <= 117 + border_width ) || ( y <= 451 && y >= 451 - border_width);
+wire border =  game_area && ((y >= 117 && y <= 117 + border_width ) || ( y <= 451 && y >= 451 - border_width));
 wire paddle1 = ((x>=posX1+8) && (x<=posX1+18) &&( y>=posY1+8)&& ( y<=posY1+48));
 wire paddle2 = ((x>=posX2+8) && (x<=posX2+18) &&( y>=posY2+8) && ( y<=posY2+48));
 
@@ -53,8 +53,8 @@ pong_text text_show(
     .dig_left_0(num2),
     .dig_right_1(num1),
     .dig_right_0(num0),
-    .x(h_cnt),
-    .y(v_cnt),
+    .x(x),
+    .y(y),
     .text_on(text_on),
     .text_rgb(text_rgb)
 );
@@ -71,9 +71,7 @@ wire ball = ball_inX & ball_inY;
 
 always @(*) begin
 if (valid)
-    if(text_on!=4'b0000)
-        {vgaRed, vgaGreen, vgaBlue} = `WHITE;
-    else if(border)
+    if(border)
         {vgaRed, vgaGreen, vgaBlue} = `RED;
     else if(paddle1|| paddle2)
         {vgaRed, vgaGreen, vgaBlue} = `WHITE;
@@ -83,6 +81,8 @@ if (valid)
         {vgaRed, vgaGreen, vgaBlue} = `BLUE;
     else
         {vgaRed, vgaGreen, vgaBlue} = `YELLOW;
+    else if(text_on!=4'b0000)
+        {vgaRed, vgaGreen, vgaBlue} = `RED;
 else 
     {vgaRed, vgaGreen, vgaBlue} = `BLACK;
 end

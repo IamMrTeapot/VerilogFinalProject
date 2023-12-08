@@ -39,10 +39,10 @@ reg ball_inY;
 
 parameter border_width = 5;
 
-wire game_area = (x >= 55 && x <= 640-55) && (y >= 117 && y <= 480-29);
+wire game_area = (x >= 55 && x <= 585) && (y >= 117 && y <= 451);
 wire border =  game_area && ((y >= 117 && y <= 117 + border_width ) || ( y <= 451 && y >= 451 - border_width));
-wire paddle1 = game_area && ((x>=posX1) && (x<=posX1+10) &&( y>=posY1)&& ( y<=posY1+40));
-wire paddle2 = game_area && ((x>=posX2) && (x<=posX2+10) &&( y>=posY2) && ( y<=posY2+40));
+wire paddle1 = (x>=posX1) && (x<=(posX1+10)) && (y>=posY1) && (y<=(posY1+40));
+wire paddle2 = (x>=posX2) && (x<=(posX2+10)) && (y>=posY2) && (y<=(posY2+40));
 
 wire [11:0] text_rgb;
 wire [3:0] text_on;
@@ -73,15 +73,14 @@ always @(*) begin
 if (valid)
     if(border)
         {vgaRed, vgaGreen, vgaBlue} = `RED;
-    else if(paddle1|| paddle2)
+    else if(paddle1 || paddle2)
         {vgaRed, vgaGreen, vgaBlue} = `WHITE;
     else if(ball)
         {vgaRed, vgaGreen, vgaBlue} = `PINK;
     else if(game_area)
         {vgaRed, vgaGreen, vgaBlue} = `BLUE;
     else if(text_on!=4'b0000)
-        //PLEASE CHANGE TO TEXT_RGB LATER
-        {vgaRed, vgaGreen, vgaBlue} = `RED;
+        {vgaRed, vgaGreen, vgaBlue} = text_rgb;
     else
         {vgaRed, vgaGreen, vgaBlue} = `YELLOW;
 else 

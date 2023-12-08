@@ -79,10 +79,10 @@ if (valid)
         {vgaRed, vgaGreen, vgaBlue} = `PINK;
     else if(game_area)
         {vgaRed, vgaGreen, vgaBlue} = `BLUE;
+    else if(text_on!=4'b0000)
+        {vgaRed, vgaGreen, vgaBlue} = text_rgb;
     else
         {vgaRed, vgaGreen, vgaBlue} = `YELLOW;
-    else if(text_on!=4'b0000)
-        {vgaRed, vgaGreen, vgaBlue} = `RED;
 else 
     {vgaRed, vgaGreen, vgaBlue} = `BLACK;
 end

@@ -13,7 +13,7 @@ module Player(clk, rst, state, keyboard, player, posX, posY);
     reg [18:0] counter, next_counter;
     reg [9:0] nextPosY;
     
-    assign posX = (player == 1'b1) ? 10'd570: 10'd57;
+    assign posX = (player == 1'b1) ? 10'd573: 10'd57;
     
     always @(posedge clk) begin
         if(rst==1'b1) begin
@@ -39,10 +39,10 @@ module Player(clk, rst, state, keyboard, player, posX, posY);
             default: begin
                 next_counter = counter + 1'b1;
                 if(counter==19'b111_1111_1111_1111_1111) begin
-                    if(keyboard==2'b01 && posY < 10'd424) begin
+                    if(keyboard==2'b01 && posY < 10'd404) begin
                         nextPosY = posY + 1'b1;
                     end
-                    else if(keyboard==2'b10 && posY > 10'd0) begin
+                    else if(keyboard==2'b10 && posY > 10'd124) begin
                         nextPosY = posY - 1'b1;
                     end
                     else begin
